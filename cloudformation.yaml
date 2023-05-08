@@ -40,18 +40,15 @@ Resources:
       DBInstanceIdentifier: !Ref DBInstanceIdentifier
       AllocatedStorage: "200"
       MaxAllocatedStorage: "1000"
-      AssociatedRoles : [ DBInstanceRole]
       AvailabilityZone : "us-east-1"
-      DBSecurityGroups: 
-    - String
       DBSubnetGroupName: String
       EnableIAMDatabaseAuthentication: "True"
       NetworkType: String
       Port: "5432"
-      Tags: 
-    - Tag
+      # Tags: 
+      #   - Tags
       VPCSecurityGroups: 
-    - String
+        - String
       DBInstanceClass: "db.t3.micro"
       Engine: "PostgreSQL"
       EngineVersion: "11.10"
@@ -61,7 +58,33 @@ Resources:
       PubliclyAccessible: false
       StorageType: "gp2"
 
+  MyDBSecurityGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties: 
+      GroupDescription: Security group for my RDS instance
+      DBSecurityGroupIngress: 
+        - CIDRIP: 0.0.0.0/0
+          EC2SecurityGroupName: ""
+          EC2SecurityGroupId: ""
+          EC2SecurityGroupOwnerId: ""
+          # IPProtocol: tcp
+          # FromPort: "5432"
+          # ToPort: "5432"
+
+
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: String
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        
+            
 Outputs:
+  DatabaseInstancePort:
+    Value: "5432"
+  SecurityGroupId:
+    Value: !Ref MyDBSecurityGroup
   DBEndpointAddress:
     Description: "The endpoint address of the RDS instance"
     Value: !Join ["", ["postgres://", !Ref DBUsername, ":", !Ref DBPassword, "@", !GetAtt DBInstance.Endpoint.Address, "/", !Ref DBName]]
