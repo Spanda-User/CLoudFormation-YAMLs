@@ -72,12 +72,12 @@ Resources:
           # ToPort: "5432"
 
 
-  MyIAMRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: String
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+  # MyIAMRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: String
+  #     AssumeRolePolicyDocument:
+  #       Version: '2012-10-17'
         
             
 Outputs:
