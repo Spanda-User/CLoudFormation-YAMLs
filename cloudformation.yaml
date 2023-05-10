@@ -5,33 +5,29 @@ Description: "Create an Amazon RDS PostgreSQL instance"
 Parameters:
   DBInstanceIdentifier:
     Type: String
-    Description: "postgres-instance-rds"
+    Description: "samplePostgresInstanceRds"
     MinLength: 1
     MaxLength: 63
-    AllowedPattern: "[a-zA-Z][a-zA-Z0-9-]*"
-    ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters and hyphens"
+    
   DBName:
     Type: String
-    Description: "my_database"
+    Description: "sampleMyDatabase"
     MinLength: 1
     MaxLength: 64
-    AllowedPattern: "[a-zA-Za_zA_Z][a-zA-Z0-9]*"
-    ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters"
+    
   DBUsername:
     Type: String
-    Description: "kanika"
+    Description: "kanikasample"
     MinLength: 1
     MaxLength: 16
-    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
-    ConstraintDescription: "Must begin with a letter, and can include numeric and alpha numeric characters"
+    
   DBPassword:
     Type: String
-    Description: "**********"
+    Description: "kanikasample123456"
     MinLength: 8
     MaxLength: 41
     NoEcho: true
-    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
-    ConstraintDescription: "Must contain only alphanumeric characters and normal letters"
+    
 
 Resources:
   DBInstance:
@@ -40,36 +36,32 @@ Resources:
       DBInstanceIdentifier: !Ref DBInstanceIdentifier
       AllocatedStorage: "200"
       MaxAllocatedStorage: "1000"
-      AvailabilityZone : "us-east-1"
-      DBSubnetGroupName: String
+      AvailabilityZone: "us-east-1a"
+        
       EnableIAMDatabaseAuthentication: "True"
-      NetworkType: String
       Port: "5432"
       # Tags: 
       #   - Tags
-      VPCSecurityGroups: 
-        - String
       DBInstanceClass: "db.t3.micro"
-      Engine: "PostgreSQL"
-      EngineVersion: "11.10"
+      Engine: "postgres"
+      EngineVersion: "15.2"
       MasterUsername: !Ref DBUsername
       MasterUserPassword: !Ref DBPassword
       DBName: !Ref DBName
       PubliclyAccessible: false
       StorageType: "gp2"
 
-  MyDBSecurityGroup:
-    Type: AWS::RDS::DBSecurityGroup
-    Properties: 
-      GroupDescription: Security group for my RDS instance
-      DBSecurityGroupIngress: 
-        - CIDRIP: 0.0.0.0/0
-          EC2SecurityGroupName: ""
-          EC2SecurityGroupId: ""
-          EC2SecurityGroupOwnerId: ""
-          # IPProtocol: tcp
-          # FromPort: "5432"
-          # ToPort: "5432"
+  
+  RDSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Security Group for the RDS instance"
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: "5432"
+          ToPort: "5432"
+          CidrIp: "0.0.0.0/0"
+          
 
 
   # MyIAMRole:
@@ -84,7 +76,5 @@ Outputs:
   DatabaseInstancePort:
     Value: "5432"
   SecurityGroupId:
-    Value: !Ref MyDBSecurityGroup
-  DBEndpointAddress:
-    Description: "The endpoint address of the RDS instance"
-    Value: !Join ["", ["postgres://", !Ref DBUsername, ":", !Ref DBPassword, "@", !GetAtt DBInstance.Endpoint.Address, "/", !Ref DBName]]
+    Value: !Ref RDSSecurityGroup
+  
